@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Get Tiffany – Coming Soon</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="GT/logo.jpg" />
+  <style>
+    .video-carousel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 20px;
+    }
+    .video-container {
+      position: relative;
+      width: 100%;
+      max-width: 600px;
+    }
+    .video-container video {
+      width: 100%;
+      border: 2px solid #ff66cc;
+      border-radius: 6px;
+      box-shadow: 0 0 8px #ff66cc;
+    }
+    .carousel-controls {
+      margin-top: 10px;
+    }
+    .carousel-controls button {
+      margin: 0 10px;
+      padding: 10px 20px;
+      font-size: 1rem;
+      background: #ff66cc;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 0 10px #ff66cc;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="fireworks-canvas"></canvas>
+  <div class="container">
+    <img src="GT/logo.jpg" alt="Get Tiffany Logo" class="logo">
+    <h1>Coming Soon</h1>
+    <p>The legendary multiplayer dating battle is being reborn for a new generation.</p>
+    <p>Sign up to be the first to know when it's live!</p>
+
+    <form id="notify-form" action="https://formspree.io/f/xjkylrwb" method="POST">
+      <input type="email" name="email" placeholder="Your email address" required>
+      <button type="submit">Notify Me</button>
+    </form>
+
+    <div class="character-gifs">
+      <img src="GT/cw_frost.gif" alt="Frost">
+      <img src="GT/cw_reptile.gif" alt="Reptile">
+      <img src="GT/cw_tampabud.gif" alt="Tampabud">
+      <img src="GT/sweettooth.gif" alt="Sweettooth">
+    </div>
+
+    <div class="countdown-section">
+      <h2>🎬 Watch the Teaser & Tutorial</h2>
+      <div class="video-carousel">
+        <div class="video-container">
+          <video id="carousel-video" controls>
+            <source id="video-source" src="GT/Get Tiffany.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+        </div>
+        <div class="carousel-controls">
+          <button onclick="prevVideo()">⏪ Prev</button>
+          <button onclick="nextVideo()">Next ⏩</button>
+        </div>
+      </div>
+    </div>
+
+    <p class="contact-note">Contact us at <a href="mailto:info@gettiffany.com">info@gettiffany.com</a></p>
+
+    <div class="facebook-embed">
+      <h2>💬 Follow Us on Facebook</h2>
+      <div id="fb-root"></div>
+      <script async defer crossorigin="anonymous"
+        src="https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v19.0"></script>
+      <div class="fb-page"
+        data-href="https://www.facebook.com/gettiffanydotcom"
+        data-width="500"
+        data-height="140"
+        data-small-header="false"
+        data-adapt-container-width="true"
+        data-hide-cover="false"
+        data-show-facepile="true">
+        <blockquote cite="https://www.facebook.com/gettiffanydotcom" class="fb-xfbml-parse-ignore">
+          <a href="https://www.facebook.com/gettiffanydotcom">Get Tiffany</a>
+        </blockquote>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const videos = [
+      "GT/Get Tiffany.mp4",
+      "GT/Get Tiffany Creation-Tutorial.mp4",
+      "GT/GETTIFFANY.mp4",
+      "GT/WhatsApp Video 2025-05-16 at 16.44.19_c9789f98.mp4"
+    ];
+    let currentIndex = 0;
+    const videoElement = document.getElementById("carousel-video");
+    const sourceElement = document.getElementById("video-source");
+
+    function updateVideo() {
+      sourceElement.src = videos[currentIndex];
+      videoElement.load();
+      videoElement.play();
+    }
+
+    window.nextVideo = function () {
+      currentIndex = (currentIndex + 1) % videos.length;
+      updateVideo();
+    }
+
+    window.prevVideo = function () {
+      currentIndex = (currentIndex - 1 + videos.length) % videos.length;
+      updateVideo();
+    }
+  });
+  </script>
+
+  <script>
+    const canvas = document.getElementById("fireworks-canvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    window.addEventListener("resize", () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+
+    class Firework {
+      constructor() { this.reset(); }
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = canvas.height;
+        this.targetY = Math.random() * canvas.height * 0.4 + 100;
+        this.color = "hsl(" + (Math.random() * 360) + ", 100%, 70%)";
+        this.radius = 2;
+        this.speed = Math.random() * 4 + 3;
+        this.particles = [];
+        this.exploded = false;
+      }
+      update() {
+        if (!this.exploded) {
+          this.y -= this.speed;
+          if (this.y <= this.targetY) {
+            this.exploded = true;
+            for (let i = 0; i < 100; i++) {
+              this.particles.push(new Particle(this.x, this.y, this.color));
+            }
+          }
+        } else {
+          this.particles.forEach(p => p.update());
+          this.particles = this.particles.filter(p => p.alpha > 0);
+          if (this.particles.length === 0) this.reset();
+        }
+      }
+      draw() {
+        if (!this.exploded) {
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+          ctx.fillStyle = this.color;
+          ctx.fill();
+        } else {
+          this.particles.forEach(p => p.draw());
+        }
+      }
+    }
+
+    class Particle {
+      constructor(x, y, color) {
+        this.x = x;
+        this.y = y;
+        this.color = color;
+        this.radius = Math.random() * 2 + 1;
+        this.speed = Math.random() * 6;
+        this.angle = Math.random() * Math.PI * 2;
+        this.gravity = 0.05;
+        this.alpha = 1;
+        this.fade = Math.random() * 0.01 + 0.005;
+      }
+      update() {
+        this.x += Math.cos(this.angle) * this.speed;
+        this.y += Math.sin(this.angle) * this.speed + this.gravity;
+        this.alpha -= this.fade;
+      }
+      draw() {
+        ctx.globalAlpha = this.alpha;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+    }
+
+    const fireworks = Array.from({ length: 6 }, () => new Firework());
+    function animate() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.15)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      fireworks.forEach(f => {
+        f.update();
+        f.draw();
+      });
+      requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
+</body>
+</html>

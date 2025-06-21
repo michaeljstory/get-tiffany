@@ -1,0 +1,193 @@
+/* Base styles */
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #000;
+  color: #fff;
+  font-family: 'Trebuchet MS', sans-serif;
+  text-align: center;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Sparkle overlay */
+body::after {
+  content: "";
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('https://cdn.glitch.global/daefaa26-cd6a-4fa1-ab2f-d5acec884b7f/sparkle.gif?v=1689256347884') repeat;
+  opacity: 0.08;
+  animation: sparkleFloat 120s linear infinite;
+  z-index: 1;
+}
+
+@keyframes sparkleFloat {
+  0% { background-position: 0 0; }
+  100% { background-position: 3000px 3000px; }
+}
+
+/* Container styles */
+.container {
+  position: relative;
+  z-index: 2;
+  padding: 40px 20px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Logo */
+.logo {
+  max-width: 400px;
+  margin: 30px auto 10px;
+}
+
+/* Heading */
+h1 {
+  font-size: 3em;
+  margin: 20px 0 10px;
+  background: linear-gradient(to right, #ff66cc, #ffff66);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 2px 2px 6px rgba(255, 105, 180, 0.8);
+}
+
+/* Paragraph text */
+p {
+  font-size: 1.2em;
+  margin-bottom: 20px;
+  color: #ccc;
+}
+
+/* Email link */
+a {
+  color: #ff66cc;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Email form */
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+input[type="email"] {
+  padding: 12px 18px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  width: 280px;
+  background: #1a1a1a;
+  color: #fff;
+  outline: none;
+  box-shadow: 0 0 8px #ff66cc;
+  transition: box-shadow 0.3s ease;
+}
+
+input[type="email"]:focus {
+  box-shadow: 0 0 12px #ff99cc;
+}
+
+button {
+  padding: 12px 20px;
+  font-size: 1rem;
+  background: #ff66cc;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 0 12px #ff66cc;
+}
+
+button:hover {
+  background: #ff99cc;
+  transform: scale(1.05);
+}
+
+
+canvas#fireworks-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+}
+
+
+canvas#fireworks-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+
+canvas#fireworks-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+.countdown-section {
+  text-align: center;
+  margin-top: 20px;
+}
+.countdown-timer {
+  font-size: 1.4em;
+  color: #ff66cc;
+  text-shadow: 0 0 5px #ff66cc;
+}
+.youtube-video {
+  width: 100%;
+  max-width: 480px;
+  height: 270px;
+  border: 2px solid #ff66cc;
+  border-radius: 6px;
+  box-shadow: 0 0 8px #ff66cc;
+  margin-top: 10px;
+}
+.video-links {
+  margin-top: 5px;
+}
+.video-links a {
+  color: #ff99cc;
+  margin: 0 8px;
+  text-decoration: none;
+}
+.video-links a:hover {
+  text-decoration: underline;
+}
+.character-gifs {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+.character-gifs img {
+  width: 60px;
+  border: 2px solid #ff66cc;
+  border-radius: 6px;
+  box-shadow: 0 0 6px #ff66cc;
+}

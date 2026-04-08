@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pose Rig Studio</title>
+  <link rel="stylesheet" href="/chat.css" />
+  <link rel="stylesheet" href="/mobile-browser.css" />
+  <script>
+    window.__gt_rig_embed = new URLSearchParams(location.search).get('embed') === '1';
+    if (window.__gt_rig_embed) document.documentElement.classList.add('gt-rig-embed');
+  </script>
+  <style>
+    body{overflow-x:hidden}
+    .wrap{width:min(1380px,calc(100vw - 12px));margin:0 auto;padding:0 0 10px}
+    .panel{background:linear-gradient(var(--gt-frame-top),var(--gt-frame-bot));border:3px solid var(--gt-frame-border);border-radius:24px;box-shadow:0 18px 34px rgba(0,0,0,.18);overflow:hidden}
+    .head{padding:14px 18px;background:linear-gradient(var(--gt-sky-top),var(--gt-sky-bot));border-bottom:3px solid var(--gt-frame-border);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+    .title{font-size:30px;font-weight:900;color:#f6c744;text-shadow:1px 1px 0 #7e5f0a,2px 2px 0 rgba(255,255,255,.2);font-style:italic}
+    .sub{font:800 12px/1.35 Arial,Helvetica,sans-serif;color:#244356;max-width:980px}
+    .body{padding:12px;display:grid;grid-template-columns:290px minmax(360px,1fr) 330px;gap:12px;align-items:start}
+    .card{background:linear-gradient(#fafafd,#e7e6ee);border:2px solid #a1a4b0;border-radius:18px;box-shadow:0 10px 18px rgba(0,0,0,.10);overflow:hidden}
+    .cardhead{background:linear-gradient(#7fd1ef,#68c6e7);border-bottom:2px solid var(--gt-frame-border);padding:12px 14px;font-size:18px;font-weight:900;color:#163244}
+    .cardbody{padding:12px;display:grid;gap:10px}
+    .btn,.pill{appearance:none;border:2px solid var(--gt-btn-border);border-radius:12px;background:linear-gradient(var(--gt-btn-top),var(--gt-btn-bot));color:#111;cursor:pointer;font:900 13px/1 Arial,Helvetica,sans-serif;padding:10px 12px;box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 8px 16px rgba(0,0,0,.10);text-decoration:none}
+    .btn.secondary,.pill{background:linear-gradient(#f9fbfd,#e7edf4)}
+    .toolbar,.pillrow,.rowActions{display:flex;gap:8px;flex-wrap:wrap}
+    .pill.active{outline:3px solid rgba(76,140,210,.35)}
+    .tip{padding:10px 12px;background:#eef8ff;border:1px solid #b8dff2;border-radius:12px;color:#21465c;font:800 12px/1.35 Arial,Helvetica,sans-serif}
+    .small{font-size:12px;color:#566678;font-weight:800}.tiny{font-size:11px;color:#687686;font-weight:800}
+    .status{display:none;padding:12px 14px;border-radius:12px;font-size:14px;font-weight:900}
+    .status.show{display:block}.status.ok{display:block;background:#e4f8e5;border:1px solid #81bd86;color:#1f6a25}.status.err{display:block;background:#ffe7e7;border:1px solid #d68b8b;color:#8c1f1f}
+    .stack{display:grid;gap:10px}
+    .slotList{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+    .slotBtn{justify-content:flex-start;text-align:left}
+    .slotBtn.active{outline:3px solid rgba(76,140,210,.35)}
+    .stageWrap{display:grid;gap:10px}
+    .stage{position:relative;width:min(100%,360px);height:470px;margin:0 auto;border-radius:22px;border:2px solid rgba(44,69,91,.26);background:radial-gradient(circle at 50% 18%,#fff,#e8edf5 58%,#dfe5ec 100%);overflow:visible;box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 12px 20px rgba(0,0,0,.08)}
+    .stage::after{content:'';position:absolute;left:12px;right:12px;bottom:16px;height:18px;border-radius:50%;background:radial-gradient(circle,#000 0,rgba(0,0,0,.18) 42%,rgba(0,0,0,0) 75%);filter:blur(7px);opacity:.18;pointer-events:none}
+    .stageInner{position:absolute;left:50%;bottom:10px;width:260px;height:390px;transform:translateX(-50%)}
+    .guide{position:absolute;left:0;top:0;width:100%;height:100%;object-fit:contain;opacity:.12;pointer-events:none;filter:grayscale(1)}
+    .layer{position:absolute;transform-origin:top left;cursor:move;user-select:none;touch-action:none;-webkit-user-drag:none}
+    .ghost{position:absolute;display:flex;align-items:flex-start;justify-content:flex-start;min-height:18px;background:repeating-linear-gradient(135deg,rgba(30,111,215,.08),rgba(30,111,215,.08) 6px,rgba(30,111,215,.16) 6px,rgba(30,111,215,.16) 12px);border:1px dashed rgba(30,111,215,.55);border-radius:8px;color:#184a88;cursor:move;user-select:none;touch-action:none}
+    .ghost span{display:inline-block;padding:2px 5px;font:900 10px/1 Arial,Helvetica,sans-serif;background:rgba(255,255,255,.9);border-radius:0 0 8px 0}
+    .layer.box,.ghost.box{box-shadow:0 0 0 1px rgba(30,111,215,.25) inset}
+    .selectionFrame{position:absolute;z-index:999;border:2px dashed #1e6fd7;border-radius:12px;background:rgba(30,111,215,.06);pointer-events:none}
+    .selectionMove{position:absolute;left:-2px;top:-22px;padding:3px 7px;border-radius:10px;background:#1e6fd7;color:#fff;font:900 10px/1 Arial,Helvetica,sans-serif;white-space:nowrap;pointer-events:auto;cursor:move}
+    .selectionResize{position:absolute;right:-7px;bottom:-7px;width:16px;height:16px;border-radius:50%;border:2px solid #fff;background:#1e6fd7;box-shadow:0 4px 10px rgba(0,0,0,.24);cursor:nwse-resize;pointer-events:auto}
+    .coords{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+    label{display:grid;gap:6px;font-weight:800;color:#253544;font-size:13px}
+    input{width:100%;border:2px solid var(--gt-btn-border);border-radius:12px;background:#fff;color:#111;font:700 14px/1.2 Arial,Helvetica,sans-serif;padding:10px 12px;outline:none}
+    .previewCard{background:#f7fbff;border:1px solid rgba(32,78,112,.18);border-radius:14px;padding:10px;display:grid;gap:8px}
+    .previewStage{min-height:250px;border-radius:16px;background:radial-gradient(circle at 50% 20%,#ffffff,#ebf1f6 60%,#dde7ef 100%);display:flex;align-items:flex-end;justify-content:center;overflow:hidden;padding:8px;box-shadow:inset 0 1px 0 rgba(255,255,255,.85)}
+    .previewStage img{display:block;max-width:100%;max-height:260px;width:auto;height:auto;object-fit:contain;object-position:center bottom}
+    .assetGallery{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;max-height:280px;overflow:auto;padding-right:2px}
+    .assetCard{background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:12px;padding:6px;display:grid;gap:6px;cursor:pointer;position:relative}
+    .assetCard.active{outline:3px solid rgba(76,140,210,.28)}
+    .assetThumb{width:100%;height:72px;object-fit:contain;background:#f3f5f9;border-radius:10px;border:1px solid rgba(0,0,0,.08)}
+    .assetName{font:800 10px/1.25 Arial,Helvetica,sans-serif;color:#455566;word-break:break-word}
+    .assetMeta{font:800 9px/1.2 Arial,Helvetica,sans-serif;color:#6a7785}
+    .assetDelete{position:absolute;right:6px;top:6px;appearance:none;border:1px solid rgba(138,29,29,.2);background:#fff1f1;color:#8a1d1d;border-radius:10px;padding:3px 6px;font:900 11px/1 Arial,Helvetica,sans-serif;cursor:pointer}
+    .row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:14px}
+    .row.active{outline:3px solid rgba(76,140,210,.18);background:#f7fbff}
+    .table{display:grid;gap:8px;max-height:240px;overflow:auto}
+    .muted{opacity:.8}
+    @media (max-width:1180px){.body{grid-template-columns:1fr}.stage{width:min(100%,380px)}}
+    html.gt-rig-embed body{background:transparent}
+    html.gt-rig-embed #header-container{display:none!important}
+    html.gt-rig-embed .wrap{width:min(100%,calc(100vw - 8px));padding:0}
+    html.gt-rig-embed .panel{border-radius:18px;box-shadow:none;border-width:2px}
+    html.gt-rig-embed .head{padding:10px 14px}
+    html.gt-rig-embed .head .toolbar{display:none!important}
+  </style>
+</head>
+<body class="rig-embed-aware">
+  <div id="header-container"></div>
+  <div class="wrap">
+    <section class="panel">
+      <div class="head">
+        <div>
+          <div class="title">Pose Rig Studio</div>
+          <div class="sub">This rebuilt rig is only for the actual game poses: Idle, Fists, V-sign, Roses, Pants and Trip. Pick a pose, pick a slot, drag it, resize it, upload replacements when needed, then save the rig. Each pose now keeps its own layout, so saving Roses, Pants or Trip will not shove the other poses out of place.</div>
+        </div>
+        <div class="toolbar">
+          <a class="btn secondary" href="/admin.html">Back to admin</a>
+        </div>
+      </div>
+      <div class="body">
+        <section class="card">
+          <div class="cardhead">Poses & slots</div>
+          <div class="cardbody">
+            <div id="rigStatus" class="status"></div>
+            <div class="tip">Simple mode: drag the selected layer on the stage. Use the blue corner to resize. The lower preview now follows your edits, each pose saves independently, and Normalise size to Idle keeps each pose's own artwork but matches Idle's overall footprint so transitions look natural in game.</div>
+            <div>
+              <div class="small">Pose</div>
+              <div id="posePills" class="pillrow"></div>
+            </div>
+            <div>
+              <div class="small">Slot</div>
+              <div id="slotList" class="slotList"></div>
+            </div>
+            <div class="stack">
+              <div class="toolbar">
+                <button class="btn secondary" id="copySharedBtn" type="button">Copy Idle into this pose</button>
+                <button class="btn secondary" id="normalisePoseBtn" type="button">Normalise size to Idle</button>
+                <button class="btn secondary" id="resetSlotBtn" type="button">Reset selected slot</button>
+                <button class="btn secondary" id="resetPoseBtn" type="button">Reset this pose</button>
+              </div>
+              <div class="toolbar">
+                <button class="btn secondary" id="sendBackBtn" type="button">To back</button>
+                <button class="btn secondary" id="backOneBtn" type="button">Back one</button>
+                <button class="btn secondary" id="forwardOneBtn" type="button">Forward one</button>
+                <button class="btn secondary" id="bringFrontBtn" type="button">To front</button>
+              </div>
+              <div class="toolbar">
+                <button class="btn secondary" id="savePoseBtn" type="button">Save rig</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="cardhead">Stage</div>
+          <div class="cardbody">
+            <div class="toolbar">
+              <label class="tiny"><input id="showBoxes" type="checkbox" checked /> Show boxes</label>
+              <label class="tiny"><input id="showGuide" type="checkbox" /> Show guide</label>
+              <label class="tiny"><input id="snapToGrid" type="checkbox" checked /> Snap</label>
+              <label class="tiny">Grid <input id="gridSize" type="number" min="1" value="2" style="width:70px;padding:6px 8px" /></label>
+            </div>
+            <div class="stageWrap">
+              <div id="stage" class="stage"></div>
+              <div class="coords">
+                <label>X <input id="fieldX" type="number" /></label>
+                <label>Y <input id="fieldY" type="number" /></label>
+                <label>W <input id="fieldW" type="number" /></label>
+              </div>
+              <div class="toolbar">
+                <button class="btn secondary" data-nudge="left" type="button">←</button>
+                <button class="btn secondary" data-nudge="up" type="button">↑</button>
+                <button class="btn secondary" data-nudge="down" type="button">↓</button>
+                <button class="btn secondary" data-nudge="right" type="button">→</button>
+                <button class="btn secondary" data-nudge="grow" type="button">+ size</button>
+                <button class="btn secondary" data-nudge="shrink" type="button">- size</button>
+                <button class="btn secondary" id="applyRectBtn" type="button">Apply numbers</button>
+              </div>
+              <div class="previewCard">
+                <div class="small">Actual in-game pose output</div>
+                <div class="previewStage"><img id="gamePosePreview" alt="" /></div>
+                <div id="gamePreviewMeta" class="tiny">Loading current game pose preview...</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="cardhead">Selected slot</div>
+          <div class="cardbody">
+            <div id="selectionMeta" class="tip">Pick a slot to edit.</div>
+            <label>Preview image path
+              <input id="assetPathInput" list="assetPathList" type="text" placeholder="/Assets/...png or /uploads/rig/...png" />
+            </label>
+            <datalist id="assetPathList"></datalist>
+            <label>Upload new asset
+              <input id="assetFileInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml" />
+            </label>
+            <div class="toolbar">
+              <button class="btn secondary" id="uploadAssetBtn" type="button">Upload & use</button>
+              <button class="btn secondary" id="applyAssetPathBtn" type="button">Use path</button>
+              <button class="btn secondary" id="clearAssetBtn" type="button">Clear loaded asset</button>
+              <button class="btn secondary" id="restoreDefaultBtn" type="button">Restore default</button>
+            </div>
+            <div>
+              <div class="small">Layer order for this pose</div>
+              <div id="layerOrder" class="table"></div>
+            </div>
+            <div>
+              <div class="small">Uploaded rig assets</div>
+              <div id="assetGallery" class="assetGallery"></div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+  </div>
+
+  <script src="/nav.js"></script>
+  <script src="/pageboot.js"></script>
+  <script src="/admin_api.js"></script>
+  <script src="/js/gtCharacter.js?v=20260402shoes01"></script>
+  <script src="/admin_base_rig.js?v=20260407rig_rebuild01"></script>
+  <script src="/mobile-browser.js"></script>
+</body>
+</html>
